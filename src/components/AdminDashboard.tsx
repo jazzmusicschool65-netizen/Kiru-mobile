@@ -1516,6 +1516,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div className="text-neutral-300 space-y-1">
                       <div><strong>Address:</strong> {o.deliveryDetails.deliveryAddress}, {o.deliveryDetails.city}</div>
                       <div><strong>Payment:</strong> <span className="uppercase text-amber-400">{o.paymentDetails.method}</span> (Ref: {o.paymentDetails.transactionReference || 'N/A'})</div>
+                      {o.paymentDetails.paymentScreenshotUrl && (
+                        <div className="mt-1">
+                           <a href={o.paymentDetails.paymentScreenshotUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sky-400 hover:text-sky-300 text-[10px]">
+                             <ImageIcon className="w-3 h-3" /> View Payment Screenshot
+                           </a>
+                        </div>
+                      )}
+                      {o.status !== 'approved' && o.status !== 'delivered' && o.status !== 'cancelled' && (
+                        <button
+                          onClick={() => onUpdateOrderStatus(o.id, 'approved')}
+                          className="px-2 py-1 mt-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold hover:bg-emerald-500 hover:text-black transition-colors"
+                        >
+                          Check Payment & Approve Order
+                        </button>
+                      )}
                     </div>
 
                     <div className="space-y-1 pt-1 border-t border-neutral-800/60 text-[11px] text-neutral-400">

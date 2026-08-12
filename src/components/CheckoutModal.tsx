@@ -15,7 +15,8 @@ import {
   Check,
   Navigation,
   Globe,
-  Mail
+  Mail,
+  Image as ImageIcon
 } from 'lucide-react';
 import { 
   CartItem, 
@@ -58,7 +59,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryOptionType>('same_city');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('telebirr');
   const [transactionRef, setTransactionRef] = useState('');
+  const [paymentScreenshot, setPaymentScreenshot] = useState<string | null>(null);
   const [specialInstructions, setSpecialInstructions] = useState('');
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPaymentScreenshot(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // GPS Satellite State
   const [gpsLocation, setGpsLocation] = useState<{ latitude: number; longitude: number; accuracy: number; googleMapsUrl: string; satelliteInfo?: string } | undefined>(customerProfile?.gpsLocation);
@@ -140,8 +153,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       return;
     }
 
-    if ((paymentMethod === 'telebirr' || paymentMethod === 'cbe_birr' || paymentMethod === 'bank_transfer') && !transactionRef.trim()) {
-      alert('Please enter your payment transaction reference / receipt number.');
+    if ((paymentMethod === 'telebirr' || paymentMethod === 'cbe_birr' || paymentMethod === 'bank_transfer') && !transactionRef.trim() && !paymentScreenshot) {
+      alert('Please enter your payment transaction reference / receipt number OR upload a payment screenshot.');
       return;
     }
 
@@ -169,6 +182,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       paymentDetails: {
         method: paymentMethod,
         transactionReference: transactionRef,
+        paymentScreenshotUrl: paymentScreenshot || undefined,
         isPaid: paymentMethod !== 'cash_on_delivery'
       },
       status: 'pending',
@@ -504,14 +518,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     Open your Telebirr App or dial <strong className="text-white">*127#</strong> &gt; Pay Merchant &gt; Enter Code <strong className="text-amber-400">{telebirrCode}</strong> (Kiru Mobile Store).
                   </p>
                   <div>
-                    <label className="text-[11px] text-neutral-300">Enter Telebirr Transaction / Receipt Ref ID *</label>
+                    <label className="text-[11px] text-neutral-300">Enter Telebirr Transaction / Receipt Ref ID</label>
                     <input
                       type="text"
-                      required
                       placeholder="e.g. TB921048293"
                       value={transactionRef}
                       onChange={(e) => setTransactionRef(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-neutral-900 text-xs text-white uppercase rounded-xl border border-neutral-800 focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-neutral-300">Or Upload Payment Screenshot</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full mt-1 px-3 py-2 bg-neutral-900 text-xs text-white rounded-xl border border-neutral-800 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -534,14 +556,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     Transfer to Commercial Bank of Ethiopia Account Name: <strong className="text-white">{cbeName}</strong>.
                   </p>
                   <div>
-                    <label className="text-[11px] text-neutral-300">Enter Bank Transaction Reference ID *</label>
+                    <label className="text-[11px] text-neutral-300">Enter Bank Transaction Reference ID</label>
                     <input
                       type="text"
-                      required
                       placeholder="e.g. FT241839210"
                       value={transactionRef}
                       onChange={(e) => setTransactionRef(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-neutral-900 text-xs text-white uppercase rounded-xl border border-neutral-800 focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-neutral-300">Or Upload Payment Screenshot</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full mt-1 px-3 py-2 bg-neutral-900 text-xs text-white rounded-xl border border-neutral-800 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -565,14 +595,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     </div>
                   </div>
                   <div>
-                    <label className="text-[11px] text-neutral-300">Enter Transfer Reference Number *</label>
+                    <label className="text-[11px] text-neutral-300">Enter Transfer Reference Number</label>
                     <input
                       type="text"
-                      required
                       placeholder="e.g. TXN-8921038"
                       value={transactionRef}
                       onChange={(e) => setTransactionRef(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-neutral-900 text-xs text-white uppercase rounded-xl border border-neutral-800 focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-neutral-300">Or Upload Payment Screenshot</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full mt-1 px-3 py-2 bg-neutral-900 text-xs text-white rounded-xl border border-neutral-800 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
                 </div>

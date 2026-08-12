@@ -106,6 +106,7 @@ export type PaymentMethodType = 'telebirr' | 'cbe_birr' | 'bank_transfer' | 'cas
 export interface PaymentDetails {
   method: PaymentMethodType;
   transactionReference?: string; // for Telebirr / CBE / Bank transfer
+  paymentScreenshotUrl?: string; // for proof of payment
   senderNameOrPhone?: string;
   isPaid: boolean;
 }
